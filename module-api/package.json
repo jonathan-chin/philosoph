@@ -4,6 +4,19 @@
   "description": "The question-module contract: everything a module author needs, and nothing about the game.",
   "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
+  "keywords": [
+    "philosoph",
+    "question",
+    "quiz",
+    "education",
+    "plugin",
+    "module-api"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonathan-chin/philosoph.git",
+    "directory": "module-api"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -17,12 +30,18 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json --watch",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "typescript": "^5.7.2"

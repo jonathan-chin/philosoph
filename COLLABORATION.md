@@ -1173,7 +1173,7 @@ available under MIT; this governs future versions only. (Not legal advice.)
 
 ### Human — issue #1: answer selection lost when switching tabs
 
-A student (samnramos) filed [issue #1](https://github.com/jonathan-chin/edugame/issues/1): tapping
+A student (samnramos) filed [issue #1](https://github.com/jonathan-chin/philosoph/issues/1): tapping
 an answer, switching to "My progress", and back loses the selection. The AI confirmed it's real:
 the app renders `tab === "play" ? <PlayView/> : <ProgressView/>`, so switching **unmounts**
 PlayView, and the pick lived only in PlayView's local `selected` state → gone on remount. (The
