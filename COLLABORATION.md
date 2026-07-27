@@ -1689,7 +1689,7 @@ every relative link resolves, and the template itself was run — 500 generated 
 defects (four distinct options, exactly one power of two, grading right and wrong picks correctly)
 and the same seed twice producing an identical question.
 
-### Human — extending EduGame to a solo self-study tool
+### Human — extending philosoph to a solo self-study tool
 
 The human observed that the same engine could empower a single student to study on their own, and
 asked what a flashcard-style solo use case would need and what would fall away. The reporting

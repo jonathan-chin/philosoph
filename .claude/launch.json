@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "edugame",
+      "name": "philosoph",
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "scripts/orchestrate.mjs",
@@ -12,7 +12,7 @@
       "port": 4000
     },
     {
-      "name": "edugame-alt",
+      "name": "philosoph-alt",
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "scripts/orchestrate.mjs",
@@ -24,7 +24,7 @@
       "port": 4200
     },
     {
-      "name": "edugame-solo",
+      "name": "philosoph-solo",
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "scripts/orchestrate.mjs",

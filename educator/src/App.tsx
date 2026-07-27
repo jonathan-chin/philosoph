@@ -19,7 +19,7 @@ export function App() {
       <IonPage>
         <IonHeader>
           <IonToolbar style={{ "--background": "var(--card)" } as React.CSSProperties}>
-            <IonTitle>EduGame · Projector</IonTitle>
+            <IonTitle>philosoph · Projector</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent>
@@ -54,7 +54,7 @@ function Dashboard() {
     <IonPage>
       <IonHeader>
         <IonToolbar style={{ "--background": "var(--card)" } as React.CSSProperties}>
-          <IonTitle>EduGame · Educator</IonTitle>
+          <IonTitle>philosoph · Educator</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => setConfirmReset(true)} disabled={loading || resetMut.isPending} aria-label="Log out">
               <IonIcon slot="icon-only" icon={logOutOutline} />

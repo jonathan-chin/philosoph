@@ -1,4 +1,4 @@
-# EduGame
+# philosoph
 
 A Kahoot-style classroom game with **programmatically generated questions**, free for
 non-commercial use. Students join from their own devices, vote on a shared question shown on

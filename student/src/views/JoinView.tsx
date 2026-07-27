@@ -91,7 +91,7 @@ export function JoinView({ onJoined }: { onJoined: (token: string, name: string)
   return (
     <div className="center">
       <IonText>
-        <h1 style={{ fontSize: "2rem", marginBottom: 0 }}>EduGame</h1>
+        <h1 style={{ fontSize: "2rem", marginBottom: 0 }}>philosoph</h1>
         <p className="caption">Enter a name to join the game.</p>
       </IonText>
       <IonCard style={{ background: "var(--card)" }}>

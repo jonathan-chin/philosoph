@@ -2377,15 +2377,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"edugame@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "edugame@workspace:."
-  dependencies:
-    "@ngrok/ngrok": "npm:^1.4.1"
-    typescript: "npm:^5.7.2"
-  languageName: unknown
-  linkType: soft
-
 "ee-first@npm:1.1.1":
   version: 1.1.1
   resolution: "ee-first@npm:1.1.1"
@@ -3494,6 +3485,15 @@ __metadata:
   checksum: 10c0/8a87e63f7a4afcfb0f9f77b39bb92374afc723418b9cb716ee4257689224171002e07768eeade4ecd0e86f1fa3d8f022994219fb45634f2dbd78c6803e452458
   languageName: node
   linkType: hard
+
+"philosoph@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "philosoph@workspace:."
+  dependencies:
+    "@ngrok/ngrok": "npm:^1.4.1"
+    typescript: "npm:^5.7.2"
+  languageName: unknown
+  linkType: soft
 
 "picocolors@npm:^1.1.1":
   version: 1.1.1

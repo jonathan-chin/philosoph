@@ -1,7 +1,7 @@
 /**
  * The one security property this project actually depends on, pinned down.
  *
- * There is no authentication anywhere in EduGame. A classroom student cannot skip questions,
+ * There is no authentication anywhere in philosoph. A classroom student cannot skip questions,
  * reveal answers, swap the module pool or reset the timer for one reason only: **those routes
  * are not mounted on the server they can reach.** That is a topological guarantee, and topology
  * is easy to break by accident — one `if (solo)` inside `createStudentApp`, one convenience

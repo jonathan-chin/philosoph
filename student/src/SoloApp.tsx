@@ -373,7 +373,7 @@ function NameGate({ onNamed }: { onNamed: (name: string) => void }) {
       <IonContent>
         <div className="center" style={{ alignItems: "center" }}>
           <IonText style={{ textAlign: "center" }}>
-            <h1 style={{ fontSize: "2rem", marginBottom: 0 }}>EduGame</h1>
+            <h1 style={{ fontSize: "2rem", marginBottom: 0 }}>philosoph</h1>
             <p className="caption">Solo study. What should we call you?</p>
           </IonText>
           {/* Carded like the classroom join screen — the app's established way of giving an
