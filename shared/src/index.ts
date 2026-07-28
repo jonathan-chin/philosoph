@@ -4,8 +4,8 @@
  *
  * It re-exports `@philosoph/module-api` because those contract types (Content, QuestionInstance,
  * RevealInfo and friends) travel over the same wire. It deliberately does **not** export any
- * question module: an application composes those itself from `@philosoph/modules`, so nothing in
- * the core depends on which modules exist.
+ * question module: the engine composes those from whatever module packages are installed
+ * (discovered by `yarn modules:sync`), so nothing in the core depends on which modules exist.
  */
 
 export * from "@philosoph/module-api";

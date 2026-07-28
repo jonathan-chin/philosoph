@@ -7,7 +7,6 @@
   "packageManager": "yarn@4.17.0",
   "workspaces": [
     "module-api",
-    "modules",
     "shared",
     "api",
     "student",
@@ -16,7 +15,7 @@
   ],
   "scripts": {
     "modules:sync": "node scripts/sync-modules.mjs",
-    "build:shared": "yarn build:module-api && yarn workspace @philosoph/shared build && yarn build:modules",
+    "build:shared": "yarn build:module-api && yarn workspace @philosoph/shared build",
     "build:student": "yarn workspace @philosoph/student build",
     "build:educator": "yarn workspace @philosoph/educator build",
     "build": "yarn build:shared && yarn build:student && yarn build:educator",
@@ -26,7 +25,6 @@
     "report": "yarn modules:sync && yarn workspace @philosoph/reports report",
     "typecheck": "yarn modules:sync && yarn workspaces foreach -A run typecheck",
     "build:module-api": "yarn workspace @philosoph/module-api build",
-    "build:modules": "yarn workspace @philosoph/modules build",
     "test": "yarn workspace @philosoph/api test"
   },
   "dependencies": {

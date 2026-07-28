@@ -69,6 +69,14 @@ references a specific module either.
 **All three phases are complete.** What a new module now needs: depend on `@philosoph/module-api`,
 export a `QuestionModule`, and have an application add it to a registry. Nothing in the core changes.
 
+**Update — extraction (superseding the in-repo `@philosoph/modules` named above).** The stock modules
+have since left this repo entirely, into their own published package
+(`@philosoph/citytech-ttpr-2026-summer-question-modules`); the `@philosoph/modules` workspace no
+longer exists here. Composition is now automatic rather than a hand-edited registry: `yarn
+modules:sync` scans installed packages for the keyword `philosoph-question-modules`, and generates
+the static-import registry the API and reports tool consume. The engine ships with **zero** modules —
+install a content package to get questions. See the README's *Question modules* section.
+
 **Remaining caveat:** the boundary is *declared* (via package dependencies) rather than hard-enforced,
 because this repo uses Yarn's `node-modules` linker, which hoists and would let an undeclared import
 resolve anyway. Under Plug'n'Play, or with a lint rule forbidding cross-package deep imports, it

@@ -12,12 +12,13 @@ implementation (AI) verbatim.
 
 ## What makes it different
 
-- **Infinite questions.** Questions come from pluggable *modules* that generate fresh
-  question/answer objects on the fly — never a fixed list. Seventeen ship today: two **statistics**
-  modules (standard deviation, box-and-whisker, with graphical/numerical sub-skills), eight
-  **tech-interview vocabulary** modules — developer, QA, IT, and security, each split into
-  Beginner and Advanced — and seven **course-week vocabulary** modules built from a lecture series'
-  own slides. See [Question modules](#question-modules-the-plugin-ecosystem).
+- **Infinite questions, no bundled content.** Questions come from pluggable *module packages*
+  that generate fresh question/answer objects on the fly — never a fixed list. The engine ships
+  with **zero content**: you install the module packages you want and they're discovered at build
+  time (`yarn modules:sync`). The CityTech TTPR bootcamp's set — statistics, tech-interview
+  vocabulary, and per-week course vocabulary — lives in its own package,
+  [`@philosoph/citytech-ttpr-2026-summer-question-modules`](https://github.com/jonathan-chin/citytech-ttpr-2026-summer-question-modules).
+  See [Question modules](#question-modules-the-plugin-ecosystem).
 - **No database.** Analytics stream to a flat CSV; questions are generated in memory.
 - **Reproducible.** A single RNG seed regenerates an entire session's questions. Pass it
   on the command line (or let a UUID be assigned) — it's recorded in the manifest.
@@ -38,24 +39,22 @@ implementation (AI) verbatim.
 
 ## Architecture
 
-A Yarn-workspaces monorepo. The first three packages exist to keep question modules at arm's
-length from the engine:
+A Yarn-workspaces monorepo — the **engine only**. Question modules live in their own packages
+(installed and discovered at build time), so nothing here knows about specific content.
 
 | Package | Role |
 | --- | --- |
-| [`module-api/`](module-api) | **The contract** a question module implements: content model, seeded RNG, question/answer types, the `QuestionModule` interface, the registry factory. Depends on nothing. |
-| [`modules/`](modules) | **The plugins** — the stock question modules, plus their private chart/statistics helpers. Depends only on the contract. See [`modules/README.md`](modules/README.md). |
+| [`module-api/`](module-api) | **The contract** a question module implements: content model, seeded RNG, question/answer types, the `QuestionModule` interface, the registry factory. Published to npm; depends on nothing. Ships a reference module at `@philosoph/module-api/example`. |
 | [`shared/`](shared) | Game-level types both servers and clients agree on: live state, WebSocket protocol, analytics/CSV shapes, session recording, name checks. Re-exports the contract; names no module. |
 | [`api/`](api) | Express. Two HTTP servers sharing one in-memory session: a **student** server (bound `0.0.0.0`, tunneled — serves the student bundle + student API) and an **educator** server (bound `127.0.0.1` — control + analytics). In solo mode, one loopback-only server instead. WebSockets push live state. |
 | [`student/`](student) | Ionic React app: join by name, answer, personal progress. Served by the API (same-origin → no ngrok URL baked in). Carries the solo shell too, selected by server-reported mode. |
 | [`educator/`](educator) | Ionic React app (localhost): flow control, live analytics (Recharts), drag-to-anonymize toggle, and a projector view (question + join QR for the class). |
 | [`reports/`](reports) | Command-line report generator: turns recorded sessions into per-student and whole-class **PDF** summaries. |
 
-**Question graphics are server-rendered SVG.** Modules build the SVG themselves (see
-`modules/src/svg.ts` + `distributions.ts`) and ship the finished markup in the question `Content`;
-clients just inject it inline (theming survives via CSS variables). This keeps the student
-app free of any charting library and lets a new module invent any visual without client
-changes. Recharts is used only for the educator's analytics dashboards.
+**Question graphics are server-rendered SVG.** A module builds the SVG itself and ships the
+finished markup in the question `Content`; clients just inject it inline (theming survives via CSS
+variables). This keeps the student app free of any charting library and lets a new module invent
+any visual without client changes. Recharts is used only for the educator's analytics dashboards.
 
 Stack: TypeScript, Express, Ionic React + Ionicons, React Hook Form, TanStack Query,
 Recharts (educator analytics only), `ws`, and `@ngrok/ngrok`.
@@ -68,17 +67,21 @@ educator's projector view renders a QR of the public origin for the class to sca
 
 ## Question modules (the plugin ecosystem)
 
-A module is a self-contained plugin. It generates questions, grades them, and says what to reveal —
-and **the engine knows nothing about any of it**. `GameSession` is handed a registry rather than
-importing one, so the core has no opinion about which modules exist:
+The engine ships with no questions. It composes whatever **module packages** are installed:
+`yarn modules:sync` scans `node_modules` for packages tagged with the keyword
+`philosoph-question-modules` that export `MODULES`, and generates the registry the API server and
+report tool use. It runs automatically before `dev` / `start` / `build` / `typecheck`. With none
+installed, the registry is empty — the app runs, there are simply no questions.
 
-```ts
-import { createRegistry } from "@philosoph/module-api";
-const registry = createRegistry([myModule]);
-new GameSession(id, seed, registry);
+**To run with content**, add a module package and start:
+
+```bash
+yarn add @philosoph/citytech-ttpr-2026-summer-question-modules
+yarn start        # modules:sync discovers it; the game now has the bootcamp's questions
 ```
 
-The whole contract is one object:
+**To write your own**, implement the one-object contract from
+[`@philosoph/module-api`](https://www.npmjs.com/package/@philosoph/module-api):
 
 ```ts
 export const myModule: QuestionModule = {
@@ -90,15 +93,15 @@ export const myModule: QuestionModule = {
 ```
 
 Because `grade` and `reveal` belong to the module, the engine never inspects an answer key — a
-module can define correctness however it likes without a core change. Two constraints are worth
-knowing up front: **all randomness must come from the injected `rng`** (a session replays from its
-seed), and every question is **multiple-choice** for now, since a browser client can only collect
-an interaction it has a widget for.
+module can define correctness however it likes. Two constraints: **all randomness must come from
+the injected `rng`** (a session replays from its seed), and every question is **multiple-choice**
+for now, since a browser client can only collect an interaction it has a widget for. Package it by
+exporting `MODULES` and adding the `philosoph-question-modules` keyword to its `package.json`.
 
 **Start from the shipped example** — [`module-api/src/example.ts`](module-api/src/example.ts),
 importable as `@philosoph/module-api/example`. It's a complete, working, commented module, compiled
 and type-checked with the contract so it can't rot, but kept out of the barrel so it never lands in
-a real registry by accident. [`modules/README.md`](modules/README.md) has the full guide: the rules
+a real registry by accident. The [`@philosoph/module-api` README](module-api/README.md) has the full guide: the rules
 that matter, how to register, and what to assert when checking your own module.
 
 ## Solo study
@@ -165,7 +168,7 @@ yarn start --solo          # solo study: http://localhost:4500, no tunnel (see a
 
 `yarn start` will:
 
-1. Build `module-api`, `shared`, `modules` + both client bundles.
+1. Build `module-api`, `shared`, and both client bundles (question modules are prebuilt packages).
 2. Start the API — student server on **:4000** (tunneled), educator server on **:4100**
    (localhost only). If either port is already in use, the launcher automatically advances to
    the next free one and prints the port it settled on.
@@ -201,8 +204,8 @@ them: with a single learner there is no class to report on and nothing to be ran
 
 ```bash
 yarn workspace @philosoph/module-api dev  # tsc --watch (the contract)
-yarn workspace @philosoph/modules dev     # tsc --watch (the question modules)
 yarn workspace @philosoph/shared dev      # tsc --watch
+yarn modules:sync                         # regenerate the registry from installed module packages
 yarn workspace @philosoph/api dev         # tsx watch (STUDENT_DIST/EDUCATOR_DIST optional)
 yarn workspace @philosoph/student dev     # Vite dev server (proxies /api + /ws to :4000)
 yarn workspace @philosoph/educator dev    # Vite dev server (proxies to :4100)

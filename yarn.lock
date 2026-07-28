@@ -1091,15 +1091,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@philosoph/modules@workspace:modules":
-  version: 0.0.0-use.local
-  resolution: "@philosoph/modules@workspace:modules"
-  dependencies:
-    "@philosoph/module-api": "workspace:*"
-    typescript: "npm:^5.7.2"
-  languageName: unknown
-  linkType: soft
-
 "@philosoph/reports@workspace:reports":
   version: 0.0.0-use.local
   resolution: "@philosoph/reports@workspace:reports"

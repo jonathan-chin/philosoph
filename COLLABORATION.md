@@ -1814,3 +1814,53 @@ revisit options.
 **Verified live:** with auto-advance set to 10s, a timed-out reveal showed only "Next question" (no
 countdown) and stayed on the same question 13s later — the game halted for a manual click — while an
 *answered* reveal showed the "Pause" countdown and advanced normally.
+
+### Human — the real name
+
+"EduGame" had always been a placeholder; the project needed its own. **Decision:** the name is
+**philosoph** — knowledge and learning, not gaming — styled lowercase; the npm scope is `@philosoph`
+and the GitHub org is `philosoph-project` (the bare `philosoph` handle was taken, but the scope that
+appears in every package name is clean). This was the shorter half of a longer deliberation: many
+candidate names were generated and rejected before "philosoph" cleared the one hard test — an
+unclaimed npm scope.
+
+**AI implementation:** a mechanical but wide rename — the `@edugame/*` scope to `@philosoph/*` across
+every workspace, the user-facing "EduGame" to "philosoph" in the two client apps' headers and titles,
+the launch configs, and the docs. Two placeholder-era quotes inside this very file were left verbatim:
+it is a chronological record, and the name *was* "edugame" when they were written. The GitHub repo was
+renamed `edugame → philosoph`, and the stale build output that still carried the old scope was
+rebuilt so typecheck saw the new names.
+
+**Verified:** a clean typecheck and test run after the lockfile caught up with the workspace rename;
+no `@edugame` string survives outside the two intentional historical quotes.
+
+### Human — zero bundled content: the engine becomes a platform
+
+The deeper move behind the rename: philosoph should be a *reusable engine*, not one course's quiz app.
+**Decision:** the engine ships with **no questions at all**. The CityTech bootcamp's set — statistics,
+tech-interview vocabulary, and the seven weeks of course vocabulary — is not the product; it is one
+tenant. It moves out into its own public package, and the engine composes whatever content packages
+happen to be installed, knowing nothing about any of them. The contract a module implements
+(`@philosoph/module-api`) is published to npm so anyone can write one; and — after weighing keeping the
+content as a git dependency — the content package is **published to npm** too, so a deployment is a
+plain `yarn add`, not a git-submodule dance.
+
+**AI implementation:** discovery by convention. `yarn modules:sync` scans `node_modules` for any
+package carrying the keyword `philosoph-question-modules` and a `MODULES` export, and generates a file
+of *static* imports composing them (`createRegistry(installedModules)`) — build-time codegen, not
+runtime plugin loading, because this code ships to browsers. It is wired ahead of `dev` / `start` /
+`build` / `typecheck`; with nothing installed it writes an empty registry and the app runs with no
+questions. The composition roots (`api/src/main.ts`, `reports/src/aggregate.ts`) inject that registry;
+the route tests compose their own from the reference module, depending on no content. The `modules/`
+workspace was deleted from this repo entirely, its modules lifted into
+`@philosoph/citytech-ttpr-2026-summer-question-modules`, and `template.ts` kept behind as the contract's
+shipped `example`. One sharp edge showed up only at install time: Yarn 4's supply-chain gates refuse
+both freshly-published versions (a 24-hour minimum-release-age) and unlisted git repos — so the engine
+carries a narrow `npmPreapprovedPackages: ["@philosoph/*"]` exemption for its own scope, and the plain
+npm install sidesteps the git-repo gate altogether.
+
+**Verified:** with no content installed, `modules:sync` reports zero packages and the engine
+typechecks, tests (11/11), and builds on an empty registry. Then, end to end: installing the published
+content package was discovered as one package composing **17 modules**, and a drawn question generated
+four options and graded correctly — the full path from `yarn add` to a working question, with the
+engine still naming no content of its own.
